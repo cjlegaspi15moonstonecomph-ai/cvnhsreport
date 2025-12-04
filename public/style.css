@@ -1,0 +1,142 @@
+/* General Body & Layout */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+header {
+  background: #ff4d4d;
+  color: white;
+  text-align: center;
+  padding: 25px 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h1 {
+  margin: 0;
+}
+
+main {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* Form Elements */
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+button, .button {
+  background: #ff4d4d;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover, .button:hover {
+  background: #e60000;
+}
+
+/* Table for Admin */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #ff4d4d;
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Proof Images & Videos */
+img {
+  max-width: 100px;
+  border-radius: 6px;
+}
+
+video {
+  max-width: 150px;
+  border-radius: 6px;
+}
+
+/* Login Form for Admin */
+#loginForm {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#loginForm input {
+  margin-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  main {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  table, th, td {
+    font-size: 12px;
+  }
+
+  img, video {
+    max-width: 80px;
+  }
+}
+
+body { font-family: Arial, sans-serif; margin:20px; background:#f9f9f9;}
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+#menu button { margin-right:10px; padding:5px 10px; }
+table { width:100%; border-collapse:collapse; margin-top:20px;}
+table, th, td { border:1px solid #ccc;}
+th, td { padding:8px; text-align:left;}
+img, video { max-width:100px; max-height:80px; }
+button { cursor:pointer; }
+form { display:flex; flex-direction:column; max-width:400px; }
+form input, form select, form textarea, form button { margin-bottom:10px; padding:5px; }

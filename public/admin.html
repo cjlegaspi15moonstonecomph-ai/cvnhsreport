@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Bullying Reports</title>
+<style>
+/* General */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f4f6f8;
+  color: #333;
+}
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+h1 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+/* Login form */
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 350px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+form label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+form input, form select, form textarea, form button {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+form button {
+  background: #4287f5;
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: 0.2s;
+}
+form button:hover { background: #306fd1; }
+
+/* Report table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+th {
+  background: #f0f0f0;
+  font-weight: 600;
+}
+tr:nth-child(even) { background: #fafafa; }
+button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+button:hover { opacity: 0.8; }
+
+/* Proof preview */
+img, video {
+  max-width: 100px;
+  max-height: 80px;
+  cursor: pointer;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+/* Modal */
+#proofModal {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+#modalContent {
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#modalImg, #modalVideo {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+}
+#closeModal {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 35px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+#closeModal:hover { color: #ccc; }
+
+/* Delete animation */
+tr.deleting { opacity: 0; transition: opacity 0.5s; }
+
+/* Center specific columns */
+table td:nth-child(1), /* ID */
+table td:nth-child(10), /* Status */
+table td:nth-child(11), /* Proof */
+table td:nth-child(12)  /* Actions */
+{
+  text-align: center;
+}
+table th:nth-child(1),
+table th:nth-child(10),
+table th:nth-child(11),
+table th:nth-child(12)
+{
+  text-align: center;
+}
+
+/* Select status */
+select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Admin - Bullying Reports</h1>
+</header>
+
+<main>
+<form id="loginForm">
+<label>Username:</label>
+<input type="text" id="username" required>
+<label>Password:</label>
+<input type="password" id="password" required>
+<button type="submit">Login</button>
+</form>
+
+<div id="reportSection" style="display:none;">
+<h2>All Reports</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th><th>Date</th><th>Location</th><th>Type</th><th>Other Type</th><th>Grade</th>
+<th>Description</th><th>Bully</th><th>Reporter</th><th>Status</th><th>Proof</th><th>Actions</th>
+</tr>
+</thead>
+<tbody id="reportTable"></tbody>
+</table>
+</div>
+</main>
+
+<!-- Modal for proof zoom -->
+<div id="proofModal">
+  <span id="closeModal">&times;</span>
+  <div id="modalContent">
+    <img id="modalImg" style="display:none;">
+    <video id="modalVideo" controls style="display:none;"></video>
+  </div>
+</div>
+
+<script>
+const loginForm = document.getElementById('loginForm');
+const reportSection = document.getElementById('reportSection');
+const reportTable = document.getElementById('reportTable');
+let allReports = [];
+
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const res = await fetch('/admin-login',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({username,password})
+  });
+  const data = await res.json();
+  if(data.success){
+    loginForm.style.display='none';
+    reportSection.style.display='block';
+    await loadReports();
+  } else alert('Invalid credentials');
+});
+
+async function loadReports(){
+  const res = await fetch('/get-reports');
+  allReports = await res.json();
+  displayReports(allReports);
+}
+
+function displayReports(reports){
+  reportTable.innerHTML='';
+  reports.forEach(r => {
+    let proofHTML='-';
+    if(r.file_path && r.file_path!=='null'){
+      const ext = r.file_path.split('.').pop().toLowerCase();
+      if(['jpg','jpeg','png','gif'].includes(ext))
+        proofHTML = `<img src="/uploads/${r.file_path}" onclick="openProofModal('${r.file_path}','image')">`;
+      else if(['mp4','webm','ogg'].includes(ext))
+        proofHTML = `<video src="/uploads/${r.file_path}" onclick="openProofModal('${r.file_path}','video')"></video>`;
+      else
+        proofHTML = `<a href="/uploads/${r.file_path}" target="_blank">View File</a>`;
+    }
+
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-id', r.id);
+    tr.innerHTML = `
+      <td>${r.id}</td>
+      <td>${r.date}</td>
+      <td>${r.location}</td>
+      <td>${r.type}</td>
+      <td>${r.otherType}</td>
+      <td>${r.grade}</td>
+      <td>${r.description}</td>
+      <td>${r.bully}</td>
+      <td>${r.reporter}</td>
+      <td>
+        <select onchange="updateStatusInstant(${r.id}, this.value)">
+          <option value="Start" ${r.status==='Start'?'selected':''}>Start</option>
+          <option value="Going" ${r.status==='Going'?'selected':''}>Going</option>
+          <option value="History" ${r.status==='History'?'selected':''}>History</option>
+        </select>
+      </td>
+      <td>${proofHTML}</td>
+      <td><button onclick="deleteReportInstant(${r.id})">Delete</button></td>
+    `;
+    reportTable.appendChild(tr);
+  });
+}
+
+async function deleteReportInstant(id){
+  if(!confirm('Are you sure you want to delete this report?')) return;
+  try{
+    const res = await fetch(`/delete-report/${id}`, {method:'DELETE'});
+    const data = await res.json();
+    if(data.success){
+      const row = reportTable.querySelector(`tr[data-id="${id}"]`);
+      if(row){ row.classList.add('deleting'); setTimeout(()=>row.remove(),500); }
+      allReports = allReports.filter(r => r.id!==id);
+      alert("Report deleted!");
+    } else alert("Delete failed: "+data.message);
+  } catch(err){ console.error(err); alert("Error deleting report."); }
+}
+
+async function updateStatusInstant(id,status){
+  try{
+    const res = await fetch(`/update-status/${id}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({status})
+    });
+    const data = await res.json();
+    if(data.success){
+      const report = allReports.find(r=>r.id===id);
+      if(report) report.status=status;
+    } else alert("Failed to update status: "+data.message);
+  } catch(err){ console.error(err); alert("Error updating status."); }
+}
+
+// Modal zoom
+const modal = document.getElementById('proofModal');
+const modalImg = document.getElementById('modalImg');
+const modalVideo = document.getElementById('modalVideo');
+const closeModal = document.getElementById('closeModal');
+
+function openProofModal(file,type){
+  if(type==='image'){ modalImg.src='/uploads/'+file; modalImg.style.display='block'; modalVideo.style.display='none'; }
+  else if(type==='video'){ modalVideo.src='/uploads/'+file; modalVideo.style.display='block'; modalImg.style.display='none'; }
+  modal.style.display='flex';
+}
+closeModal.onclick=()=>{ modal.style.display='none'; modalVideo.pause(); }
+modal.addEventListener('wheel', function(e){
+  e.preventDefault();
+  const zoomFactor=0.1;
+  if(modalImg.style.display==='block'){ let w=modalImg.width; w+=(e.deltaY<0?1:-1)*w*zoomFactor; modalImg.style.width=Math.max(100,w)+'px'; }
+  if(modalVideo.style.display==='block'){ let w=modalVideo.width; w+=(e.deltaY<0?1:-1)*w*zoomFactor; modalVideo.style.width=Math.max(100,w)+'px'; }
+});
+</script>
+</body>
+</html>

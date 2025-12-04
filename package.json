@@ -1,0 +1,14 @@
+{
+  "name": "bullying-report-website",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.4",
+    "express": "^4.22.1",
+    "multer": "^2.0.2",
+    "sqlite3": "^5.1.7"
+  }
+}

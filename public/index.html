@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Bullying Report</title>
+<style>
+/* General styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f6f8;
+  color: #333;
+}
+
+/* Admin login button top-right */
+#adminButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 15px;
+  background: #4287f5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  z-index: 1000;
+}
+#adminButton:hover { background: #306fd1; }
+
+/* Admin login modal */
+#adminModal {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+#adminModalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+#adminModalContent label {
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+#adminModalContent input {
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+#adminModalContent button {
+  padding: 5px;
+  background: #4287f5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+#adminModalContent button:hover { background: #306fd1; }
+#closeAdminModal {
+  align-self: flex-end;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Page header */
+header {
+  text-align: center;
+  margin-top: 80px;
+}
+header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+}
+
+/* Report form */
+#reportFormContainer {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+#reportFormContainer h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+#reportFormContainer label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+#reportFormContainer input,
+#reportFormContainer select,
+#reportFormContainer textarea,
+#reportFormContainer button {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+#reportFormContainer button {
+  background: #4287f5;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#reportFormContainer button:hover {
+  background: #306fd1;
+}
+#reportFormContainer input[type="file"] { padding: 3px; }
+
+</style>
+</head>
+<body>
+
+<!-- Admin button -->
+<button id="adminButton">Admin Login</button>
+
+<!-- Admin modal -->
+<div id="adminModal">
+  <div id="adminModalContent">
+    <span id="closeAdminModal">&times;</span>
+    <form id="adminLoginForm">
+      <label>Username:</label>
+      <input type="text" id="adminUsername" required>
+      <label>Password:</label>
+      <input type="password" id="adminPassword" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- Page header -->
+<header>
+  <h1>School Bullying Report</h1>
+</header>
+
+<!-- Report submission form -->
+<div id="reportFormContainer">
+<h2>Submit a Report</h2>
+<form id="reportForm" enctype="multipart/form-data">
+  <label>Date:</label>
+  <input type="date" name="date" required>
+  
+  <label>Location:</label>
+  <input type="text" name="location" placeholder="Where it happened" required>
+  
+  <label>Type of Report:</label>
+  <select name="type" required>
+    <option value="">Select</option>
+    <option value="Physical Violence">Physical Violence</option>
+    <option value="Theft">Theft</option>
+    <option value="Vandalism">Vandalism</option>
+    <option value="Cyber Incident">Cyber Incident</option>
+    <option value="Student Misconduct">Student Misconduct</option>
+    <option value="Substance issue">Substance issue</option>
+    <option value="Emergency or Safety Concern">Emergency or Safety Concern</option>
+    <option value="Other">Other (please specify)</option>
+  </select>
+  
+  <label>Other Type:</label>
+  <input type="text" name="otherType" placeholder="Specify if 'Other'">
+  
+  <label>Grade Level:</label>
+  <select name="grade" required>
+    <option value="">Select</option>
+    <option value="Grade 7">Grade 7</option>
+    <option value="Grade 8">Grade 8</option>
+    <option value="Grade 9">Grade 9</option>
+    <option value="Grade 10">Grade 10</option>
+    <option value="Grade 11">Grade 11</option>
+    <option value="Grade 12">Grade 12</option>
+  </select>
+  
+  <label>Description:</label>
+  <textarea name="description" placeholder="Describe what happened" rows="4" required></textarea>
+  
+  <label>Bully Name:</label>
+  <input type="text" name="bully" placeholder="Name of the bully" required>
+  
+  <label>Your Name:</label>
+  <input type="text" name="reporter" placeholder="Your name" required>
+  
+  <label>Proof (optional):</label>
+  <input type="file" name="proof" accept="image/*,video/*">
+  
+  <button type="submit">Submit Report</button>
+</form>
+</div>
+
+<script>
+// Open/close admin modal
+const adminButton = document.getElementById('adminButton');
+const adminModal = document.getElementById('adminModal');
+const closeAdminModal = document.getElementById('closeAdminModal');
+
+adminButton.onclick = () => adminModal.style.display = 'flex';
+closeAdminModal.onclick = () => adminModal.style.display = 'none';
+window.onclick = e => { if(e.target == adminModal) adminModal.style.display = 'none'; };
+
+// Admin login
+const adminLoginForm = document.getElementById('adminLoginForm');
+adminLoginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const username = document.getElementById('adminUsername').value;
+  const password = document.getElementById('adminPassword').value;
+
+  const res = await fetch('/admin-login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({username,password})
+  });
+  const data = await res.json();
+  if(data.success){
+    alert('Login successful!');
+    window.location.href = '/admin.html';
+  } else {
+    alert('Invalid credentials');
+  }
+});
+
+// User report submission
+const reportForm = document.getElementById('reportForm');
+reportForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const formData = new FormData(reportForm);
+  const res = await fetch('/submit-report', { method:'POST', body: formData });
+  const text = await res.text();
+  alert(text);
+  reportForm.reset();
+});
+</script>
+
+</body>
+</html>

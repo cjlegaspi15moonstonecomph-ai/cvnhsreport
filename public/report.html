@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Bullying</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Submit a Bullying Report</h1>
+<form id="reportForm" action="/submit-report" method="POST" enctype="multipart/form-data">
+<label>Date:</label>
+<input type="date" name="date" required>
+<label>Location:</label>
+<input type="text" name="location" required>
+<label>Type of Report:</label>
+<select name="type" id="typeSelect" required>
+<option value="Physical Violence">Physical Violence</option>
+<option value="Theft">Theft</option>
+<option value="Vandalism">Vandalism</option>
+<option value="Cyber Incident">Cyber Incident</option>
+<option value="Student Misconduct">Student Misconduct</option>
+<option value="Substance issue">Substance issue</option>
+<option value="Emergency or Safety Concern">Emergency or Safety Concern</option>
+<option value="Other">Other</option>
+</select>
+<input type="text" name="otherType" placeholder="Please specify if Other">
+<label>Grade Level:</label>
+<select name="grade" required>
+<option value="Grade 7">Grade 7</option>
+<option value="Grade 8">Grade 8</option>
+<option value="Grade 9">Grade 9</option>
+<option value="Grade 10">Grade 10</option>
+<option value="Grade 11">Grade 11</option>
+<option value="Grade 12">Grade 12</option>
+</select>
+<label>Description:</label>
+<textarea name="description" required></textarea>
+<label>Bullying by:</label>
+<input type="text" name="bully" required>
+<label>Reporter Name:</label>
+<input type="text" name="reporter" required>
+<label>Attach proof (optional):</label>
+<input type="file" name="proof" accept="image/*,video/*">
+<button type="submit">Submit Report</button>
+</form>
+</body>
+</html>
